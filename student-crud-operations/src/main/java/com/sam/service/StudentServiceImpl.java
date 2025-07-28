@@ -70,15 +70,35 @@ public class StudentServiceImpl implements StudentService {
 	}
 
 	@Override
-	public StudentDTO updateStudent(Integer id, StudentDTO studentDTO) throws StudentException {
-		// TODO Auto-generated method stub
-		return null;
+	public StudentDTO updateStudent(Integer id, StudentDTO studentDTO) throws StudentException 
+	{
+		Optional<Student> optional = studentDAO.findById(id);
+		
+		Student student = optional.orElseThrow(()-> new StudentException("Student Id Not Found"));
+		
+		student.setName(studentDTO.getName());
+		student.setEmail(studentDTO.getEmail());
+		student.setMobile(studentDTO.getMobile());
+		
+		StudentDTO studentDTO2 = new StudentDTO();
+		studentDTO2.setId(id);
+		studentDTO2.setName(student.getName());
+		studentDTO2.setEmail(student.getEmail());
+		studentDTO2.setMobile(student.getMobile());
+		
+		return studentDTO2;
 	}
 
 	@Override
-	public Integer deleteStudent(Integer id) throws StudentException {
-		// TODO Auto-generated method stub
-		return null;
+	public Integer deleteStudent(Integer id) throws StudentException 
+	{
+		Optional<Student> optional = studentDAO.findById(id);
+		
+		Student student = optional.orElseThrow(()-> new StudentException("Student Id Not Found"));
+		
+		studentDAO.deleteById(id);
+		
+		return student.getId();
 	}
 
 }
