@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import com.sam.dao.StudentDAO;
 import com.sam.dto.StudentDTO;
@@ -15,6 +16,9 @@ import jakarta.transaction.Transactional;
 @Service("studentService")
 @Transactional
 public class StudentServiceImpl implements StudentService {
+	
+	@Autowired
+	private Environment environment;
 	
 	@Autowired
 	private StudentDAO studentDAO;
@@ -34,7 +38,8 @@ public class StudentServiceImpl implements StudentService {
 	public StudentDTO getStudentById(Integer id) throws StudentException 
 	{
 		Optional<Student> optional = studentDAO.findById(id);
-		Student student = optional.orElseThrow(()-> new StudentException("Student Id Not Found"));
+		Student student = optional.orElseThrow(()-> 
+		                   new StudentException(environment.getProperty("SERVICE.id_not_found")));
 		
 		StudentDTO studentDTO = new StudentDTO();
 		studentDTO.setId(id);
@@ -53,7 +58,7 @@ public class StudentServiceImpl implements StudentService {
 		
 		if(students.isEmpty())
 		{
-			throw new StudentException("Student List Is Empty");
+			throw new StudentException(environment.getProperty("SERVICE.no_data_found"));
 		}
 		
 		students.forEach(student->{
@@ -74,7 +79,8 @@ public class StudentServiceImpl implements StudentService {
 	{
 		Optional<Student> optional = studentDAO.findById(id);
 		
-		Student student = optional.orElseThrow(()-> new StudentException("Student Id Not Found"));
+		Student student = optional.orElseThrow(()-> 
+		                       new StudentException(environment.getProperty("SERVICE.id_not_found")));
 		
 		student.setName(studentDTO.getName());
 		student.setEmail(studentDTO.getEmail());
@@ -94,7 +100,8 @@ public class StudentServiceImpl implements StudentService {
 	{
 		Optional<Student> optional = studentDAO.findById(id);
 		
-		Student student = optional.orElseThrow(()-> new StudentException("Student Id Not Found"));
+		Student student = optional.orElseThrow(()-> 
+		                   new StudentException(environment.getProperty("SERVICE.id_not_found")));
 		
 		studentDAO.deleteById(id);
 		

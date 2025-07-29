@@ -3,6 +3,7 @@ package com.sam.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,18 +18,23 @@ import com.sam.dto.StudentDTO;
 import com.sam.exception.StudentException;
 import com.sam.service.StudentService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api")
 public class StudentController {
 	
 	@Autowired
+	private Environment environment;
+	
+	@Autowired
 	private StudentService studentService;
 	
 	@PostMapping("/students")
-	public ResponseEntity<String> saveStudent(@RequestBody StudentDTO studentDTO) throws StudentException 
+	public ResponseEntity<String> saveStudent(@RequestBody @Valid StudentDTO studentDTO) throws StudentException 
 	{
 		Integer studId = studentService.saveStudent(studentDTO);
-		String msg = "Student added Successfully having Id :-"+studId;
+		String msg = environment.getProperty("API.student_added")+":"+studId;
 		return new ResponseEntity<String>(msg, HttpStatus.CREATED);
 	}
 	
@@ -47,7 +53,7 @@ public class StudentController {
 	}
 	
 	@PostMapping("/students/{id}")
-	public ResponseEntity<StudentDTO> updateStudent(@PathVariable Integer id,@RequestBody StudentDTO studentDTO) throws StudentException
+	public ResponseEntity<StudentDTO> updateStudent(@PathVariable Integer id,@RequestBody @Valid StudentDTO studentDTO) throws StudentException
 	{
 		StudentDTO dto = studentService.updateStudent(id, studentDTO);
 		return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -57,7 +63,7 @@ public class StudentController {
 	public ResponseEntity<String> deleteStudent(@PathVariable Integer id) throws StudentException 
 	{
 		Integer studId = studentService.deleteStudent(id);
-		String msg = "Student deleted Successfully having Id :-"+studId;
+		String msg = environment.getProperty("API.student_deleted")+":"+studId;
 		return new ResponseEntity<String>(msg, HttpStatus.OK);
 	}
 

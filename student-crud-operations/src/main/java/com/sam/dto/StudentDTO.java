@@ -1,10 +1,23 @@
 package com.sam.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
 public class StudentDTO {
 
 	private Integer id;
+	
+	@NotNull(message = "VALIDATION.name_not_null")
+	@Pattern(regexp = "^[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)+$",message = "VALIDATION_invalid_name")
 	private String name;
+	
+	@NotNull(message = "VALIDATION.email_not_null")
+	@Email(message = "VALIDATION_invalid_email")
 	private String email;
+	
+	@NotNull(message = "VALIDATION.number_not_null")
+	@Pattern(regexp = "[6-9][0-9]{9}",message = "VALIDATION_invalid_number")
 	private String mobile;
 
 	public StudentDTO() {
